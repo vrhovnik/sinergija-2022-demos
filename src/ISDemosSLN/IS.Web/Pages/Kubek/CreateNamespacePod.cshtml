@@ -1,0 +1,71 @@
+@page
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model CreateNamespacePodPageModel
+
+@{
+    ViewData["Title"] = "Create namespace and pod";
+}
+
+<h1>
+    Create namespace and pod
+</h1>
+
+@if (!string.IsNullOrEmpty(Model.InfoText))
+{
+    <p class="text-danger font-weight-bolder mt-4 mb-4">@Model.InfoText</p>
+}
+<p>
+    Use below form to create a pod from selected image in newly created namespace. It will automatically redirect you after creation
+    to <a asp-page="/Kubek/ListNamespaces">List namespaces</a> option.
+</p>
+
+<form method="post">
+    <div class="mb-3 row">
+        <label class="col-sm-2 col-form-label"
+               for="namespaceName">
+            Namespace name
+        </label>
+        <div class="col-sm-10">
+            <input asp-for="NamespaceName"
+                   class="form-control"
+                   id="namespaceName"
+                   type="text">
+            <small class="form-text text-muted"
+                   id="namespaceNameInfo">
+                Use all lowercase
+            </small>
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label class="col-sm-2 col-form-label"
+               for="podName">
+            Pod name
+        </label>
+        <div class="col-sm-10">
+            <input asp-for="PodName"
+                   class="form-control"
+                   id="podName"
+                   type="text">
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="sizeCombo"
+               class="col-sm-2 col-form-label">
+            Select image to deploy to pod
+        </label>
+        <div class="col-sm-10">
+            <select class="form-control"
+                    id="sizeCombo"
+                    name="image">
+                @foreach (var listItem in Model.Images)
+                {
+                    <option value="@listItem.Name">@listItem.Name</option>
+                }
+            </select>
+        </div>
+    </div>
+    <button class="btn btn-primary"
+            type="submit">
+        Create namespace and pod with selected image <i class="fa-solid fa-check"></i>
+    </button>
+</form>

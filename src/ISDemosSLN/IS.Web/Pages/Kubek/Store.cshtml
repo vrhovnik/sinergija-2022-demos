@@ -1,0 +1,76 @@
+@page
+@model StorePageModel
+
+@{
+    ViewData["Title"] = "Store scenario";
+}
+
+<h1>
+    Store scenario
+</h1>
+<p class="text-info">Below is an example of scenario, how you could use Kubernetes API's in action.</p>
+
+@if (!string.IsNullOrEmpty(Model.InfoText))
+{
+    <p class="text-danger font-weight-bolder mt-4 mb-4">@Model.InfoText</p>
+}
+<h3>
+    Create a new store
+</h3>
+<p>
+    Use below details to create a new trial store to test out functionality and then, if you like it, you can
+    buy the subscription.
+</p>
+
+@if (!string.IsNullOrEmpty(Model.StoreIp))
+{
+    <p class="text-success font-weight-bolder mt-4 mb-4">Navigate to <a href="http://@Model.StoreIp">the store</a>.</p>
+    <form method="post">
+        <input asp-for="StoreIp"
+               type="hidden" />
+        <div class="mb-3 row">
+            <label class="col-sm-2 col-form-label"
+                   for="dnsName">
+                DNS name
+            </label>
+            <div class="col-sm-10">
+                <input asp-for="DnsName"
+                       class="form-control"
+                       id="dnsName"
+                       required="required"
+                       type="text">
+            </div>
+        </div>
+        <button class="btn btn-primary mr-3"
+                type="submit">
+            Create FQDN and redirect there <i class="fas fa-arrow-right"></i>
+        </button>
+    </form>
+    <hr class="m-4"/>
+}
+
+<form method="post">
+    <div class="mb-3 row">
+        <label class="col-sm-2 col-form-label"
+               for="namespaceName">
+            Store name
+        </label>
+        <div class="col-sm-10">
+            <input asp-for="NamespaceName"
+                   class="form-control"
+                   id="namespaceName"
+                   type="text">
+        </div>
+    </div>
+    <button asp-page-handler="CreateScenario"
+            class="btn btn-primary mr-3"
+            type="submit">
+        Create scenario <i class="fas fa-store-alt"></i>
+    </button>
+    &nbsp;
+    <button asp-page-handler="DeleteScenario"
+            class="btn btn-danger"
+            type="submit">
+        Delete scenario <i class="fas fa-minus-circle"></i>
+    </button>
+</form>

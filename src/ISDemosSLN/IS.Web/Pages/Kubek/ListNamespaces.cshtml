@@ -1,0 +1,42 @@
+@page
+@model ListNamespacesPageModel
+
+@{
+    ViewData["Title"] = "List namespaces on cluster";
+}
+
+<h1>
+    List namespaces
+</h1>
+<p>
+    Below you can see all of the namespaces on the cluster (you can query the namespace to get back pods)
+</p>
+
+<table class="table table-light table-striped">
+    <thead>
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">Creation date</th>
+        <th scope="col">Labels</th>
+        <th scope="col">...</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var currentModel in Model.NamespaceViewModels)
+    {
+        <tr>
+            <td>@currentModel.Id</td>
+            <td>@currentModel.Name</td>
+            <td>@currentModel.CreationDate.ToShortDateString()</td>
+            <td>@currentModel.Labels</td>
+            <td>
+                <a asp-page="/Kubek/PodForNamespace"
+                   asp-route-name="@currentModel.Name">
+                    Pods <i class="far fa-arrow-alt-circle-right"></i>
+                </a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

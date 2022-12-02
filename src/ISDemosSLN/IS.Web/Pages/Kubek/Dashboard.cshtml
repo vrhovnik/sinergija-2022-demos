@@ -1,0 +1,67 @@
+﻿@page
+@model DashboardPageModel
+
+@{
+    var clusterName = Model.BasicInformation.Name;
+    ViewData["Title"] = "Kubek dashboard";
+}
+
+<h2>
+    Kubek dashboard for <b>@clusterName</b>
+</h2>
+
+<p class="text-info">
+    API master address:
+    <a class="link-secondary"
+       href="@Model.BasicInformation.Address">
+        @Model.BasicInformation.Address
+    </a>
+</p>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">List workloads</h5>
+                <h6 class="card-subtitle mb-2 text-muted">list namespaces and workloads inside cluster @clusterName</h6>
+                <p class="card-text">
+                    List namespaces and workloads based on the user permission on the K8S cluster with their associated pods.
+                </p>
+                <a asp-page="/Kubek/ListNamespaces"
+                   class="card-link">
+                    Go <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Create namespaces and pod</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Create namespace in cluster @clusterName</h6>
+                <p class="card-text">
+                    Create a namespace and pod inside of cluster @clusterName with getting data from private container registry
+                </p>
+                <a asp-page="/Kubek/CreateNamespacePod"
+                   class="card-link">
+                    Go <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Scenario simulation</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Simulate web shop scenario</h6>
+                <p class="card-text">
+                    Simulate scenario of creating new store and getting IP to check the store is running.
+                </p>
+                <a asp-page="/Kubek/Store"
+                   class="card-link">
+                    Go <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

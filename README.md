@@ -1,4 +1,4 @@
-# Sinergija 2022 demos
+# Sinergija 2022 demos - programmatic access to Azure Kubernetes Service
 
 Demos for conference [Sinergija 2022](https://www.sinergija.live/en/), December 2022 in Belgrade, Serbia. I will be
 talking about how to write your own kubectl with Csharp, explaining possible options and what is already done in Kubectl
@@ -7,7 +7,7 @@ world to take advantage on integrating your workflow with Azure Kubernetes Servi
 Slides are available [here](https://webeudatastorage.blob.core.windows.net/web/Programmatic-access-to-AKS.pdf), demo explanation below.
 
 <!-- TOC -->
-* [Sinergija 2022 - demos for session about Programmatic access to AKS](#sinergija-2022-conference---demos-for-session-about-programmatic-access-to-aks)
+* [Sinergija 2022 demos - programmatic access to Azure Kubernetes Service](#sinergija-2022-demos---programmatic-access-to-azure-kubernetes-service)
   * [Demo structure](#demo-structure)
     * [Csharp project structure](#csharp-project-structure)
     * [IS.REST project](#isrest-project)
