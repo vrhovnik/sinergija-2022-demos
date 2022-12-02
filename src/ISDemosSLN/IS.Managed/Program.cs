@@ -23,7 +23,7 @@ await namespaceOps.ListAllNamespacesAsync();
 
 var nsName = AnsiConsole.Ask<string>("What [green]namespace[/] would you like to create?");
 await namespaceOps.CreateNamespaceAsync(nsName,
-    new Dictionary<string, string> { { "app", "cli" }, { "conf", "ntk" }, { "type", "ns" } });
+    new Dictionary<string, string> { { "app", "cli" }, { "conf", "sinergija" }, { "type", "ns" } });
 
 await namespaceOps.ListAllNamespacesAsync();
 
@@ -48,7 +48,7 @@ var podImage = AnsiConsole.Ask<string>("What [green]image[/] would you like to u
 var podName = new Faker().Hacker.Abbreviation().ToLowerInvariant();
 
 await workloadOps.CreatePodAsync(podName, podImage,
-    new Dictionary<string, string> { { "app", "cli" }, { "conf", "ntk" }, { "type", "pods" } },
+    new Dictionary<string, string> { { "app", "cli" }, { "conf", "sinergija" }, { "type", "pods" } },
     namespaceToCheckPods);
 
 await workloadOps.OutputPodsAsync(namespaceToCheckPods);
@@ -68,7 +68,7 @@ HorizontalRule("05 - exec into POD");
 
 var podNameToExecInto = "simple-web-app";
 await workloadOps.CreatePodAsync(podNameToExecInto, "csacoreimages.azurecr.io/tta/web:1.0",
-    new Dictionary<string, string> { { "app", "cli" }, { "conf", "ntk" }, { "type", "pods" } });
+    new Dictionary<string, string> { { "app", "cli" }, { "conf", "sinergija" }, { "type", "pods" } });
 
 var podToExecInto = await workloadOps.GetV1PodAsync(podNameToExecInto);
 AnsiConsole.WriteLine($"Read pod {podToExecInto.Metadata.Name}");

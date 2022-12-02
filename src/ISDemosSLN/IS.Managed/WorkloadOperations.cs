@@ -134,7 +134,7 @@ public class WorkloadOperations : BaseKubernetesOps
     public async Task LoadYamlOutputDataAsync(bool execute = false)
     {
         var filePath = Environment.GetEnvironmentVariable("YAMLPATH") ??
-                       @"C:\Work\Projects\ntk-2022-demos\yaml";
+                       @"C:\Work\Projects\sinergija-2022-demos\yaml";
 
         if (!Directory.Exists(filePath))
         {
