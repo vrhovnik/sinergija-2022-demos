@@ -1,6 +1,6 @@
 # Sinergija 2022 demos
 
-Demos for conference [Sinergija 2022](https://ntk.si/), December 2022 in Belgrade, Serbia. I will be
+Demos for conference [Sinergija 2022](https://www.sinergija.live/en/), December 2022 in Belgrade, Serbia. I will be
 talking about how to write your own kubectl with Csharp, explaining possible options and what is already done in Kubectl
 world to take advantage on integrating your workflow with Azure Kubernetes Service as main tech provider behind the scenes.
 
