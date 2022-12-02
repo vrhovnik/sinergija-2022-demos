@@ -1,0 +1,47 @@
+﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ttaweb
+  labels:
+    app: tta
+    conf: sinergija
+    type: web
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: tta
+      conf: sinergija
+      type: web
+  template:
+    metadata:
+      labels:
+        app: tta
+        conf: sinergija
+        type: web
+    spec:
+      containers:
+        - name: ttaweb
+          image: csacoreimages.azurecr.io/tta/web:1.0
+          env:
+            - name: SQLOPTIONS__CONNECTIONSTRING
+              value: ""
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ttaweb-service
+  labels:
+    app: tta
+    conf: sinergija
+    type: svc
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+  selector:
+    app: tta
+    conf: sinergija
+    type: web
