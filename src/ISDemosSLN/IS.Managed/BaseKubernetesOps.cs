@@ -24,9 +24,16 @@ public abstract class BaseKubernetesOps
 
             foreach (var metric in item.Usage)
             {
-                table.AddRow(item.Metadata.Name, metric.Key, metric.Value.ToString());
+                var resourceQuantity = metric.Value;
+                var inMb = Math.Round(resourceQuantity.ToDouble() / (1024 * 1024 * 1024), 2);
+                var resourceValue = resourceQuantity.ToString();
+                if (metric.Key.ToLower() == "memory")
+                    resourceValue = $"{resourceQuantity} ({inMb} mb)";
+
+                table.AddRow(item.Metadata.Name, metric.Key, resourceValue);
             }
         }
+
         AnsiConsole.Write(table);
     }
 
@@ -34,19 +41,19 @@ public abstract class BaseKubernetesOps
     {
         var podsMetrics = await client.GetKubernetesPodsMetricsAsync().ConfigureAwait(false);
 
-        if (!podsMetrics.Items.Any()) 
+        if (!podsMetrics.Items.Any())
             AnsiConsole.WriteLine("No pod metrics are available.");
 
         var table = new Table();
         table.AddColumn(new TableColumn("Container").Centered());
         table.AddColumn(new TableColumn("Key").Centered());
         table.AddColumn(new TableColumn("Value").Centered());
-        
+
         foreach (var item in podsMetrics.Items)
         {
             foreach (var container in item.Containers)
             {
-                Console.WriteLine(container.Name);
+                //AnsiConsole.WriteLine(container.Name);
 
                 foreach (var metric in container.Usage)
                 {
@@ -54,6 +61,7 @@ public abstract class BaseKubernetesOps
                 }
             }
         }
+
         AnsiConsole.Write(table);
     }
 }

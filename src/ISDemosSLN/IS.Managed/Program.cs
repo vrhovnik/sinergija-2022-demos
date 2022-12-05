@@ -91,17 +91,20 @@ switch (menuSelection)
         //open new PWSH terminal and delete the pod kubectl delete pod nameofthepod -n namespacetocheckpods
         //return back here and press CTRL + C to continue
         HorizontalRule("04 - load yaml and do modifications");
-        var checkAndRunResources = AnsiConsole.Ask("Read and create [green]resources[/]?", false);
+        var checkAndRunResources = AnsiConsole.Confirm("Read and create [green]resources[/]?");
         await workloadOps.LoadYamlOutputDataAsync(checkAndRunResources);
         break;
     }
     case "05 - exec into POD":
     {
         HorizontalRule("05 - exec into POD");
-        var podNameToExecInto = "simple-web-app";
+        var podNameToExecInto =
+            AnsiConsole.Ask<string>("Specify [green]name[/] for the pod to exe into", "simple-web-app");
         await workloadOps.CreatePodAsync(podNameToExecInto, "csacoreimages.azurecr.io/tta/web:1.0",
             new Dictionary<string, string> { { "app", "cli" }, { "conf", "sinergija" }, { "type", "pods" } });
 
+        await Task.Delay(2000); //delay operation for k8s to finish with processing
+        
         var podToExecInto = await workloadOps.GetV1PodAsync(podNameToExecInto);
         AnsiConsole.WriteLine($"Read pod {podToExecInto.Metadata.Name}");
 
@@ -110,16 +113,19 @@ switch (menuSelection)
     }
     case "06 - do port forwarding to a pod":
         HorizontalRule("06 - do port forwarding to a pod");
-        var podNamePortForward = "simple-web-app-for-exec";
+        var podNamePortForward =
+            AnsiConsole.Ask<string>("Specify [green]name[/] for the pod to port fwd to", "simple-web-app-for-exec");
         await workloadOps.CreatePodAsync(podNamePortForward, "csacoreimages.azurecr.io/tta/web:1.0",
             new Dictionary<string, string> { { "app", "cli" }, { "conf", "sinergija" }, { "type", "pods" } });
 
+        await Task.Delay(2000);
         var podToForwardTo = await workloadOps.GetV1PodAsync(podNamePortForward);
         await workloadOps.PortforwardToPodAsync(podToForwardTo);
         break;
     case "07 - get metrics for node and pods":
         HorizontalRule("07 - get metrics for node and pods");
         await workloadOps.GetNodesMetricsAsync();
+        Console.Read();
         await workloadOps.GetPodsMetricsAsync();
         break;
     default:

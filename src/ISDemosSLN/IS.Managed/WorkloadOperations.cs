@@ -164,6 +164,8 @@ public class WorkloadOperations : BaseKubernetesOps
         
         if (objects == null) throw new NullReferenceException("Objects in YAML were not recognized.");
         
+        AnsiConsole.WriteLine($"Reading {objects.Count} objects inside YAML file");
+        
         foreach (var obj in objects)
         {
             AnsiConsole.WriteLine(obj.ToString());
@@ -173,15 +175,18 @@ public class WorkloadOperations : BaseKubernetesOps
                 {
                     case V1Service service:
                         await client.CoreV1.CreateNamespacedServiceAsync(service, "default");
+                        AnsiConsole.WriteLine("Service with load balancer was created");
                         break;
                     case V1Pod pod:
                         await client.CoreV1.CreateNamespacedPodAsync(pod, "default");
+                        AnsiConsole.WriteLine("Pods were created");
                         break;
                     case V1Deployment deployment:
                         //change connection string environment variable
                         deployment.Spec.Template.Spec.Containers[0].Env[0].Value =
                             Environment.GetEnvironmentVariable("PRODUCTIONSQLCONNSTRING");
                         await client.AppsV1.CreateNamespacedDeploymentAsync(deployment, "default");
+                        AnsiConsole.WriteLine("Deployment was created");
                         break;
                 }
             }
