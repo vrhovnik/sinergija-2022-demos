@@ -34,9 +34,10 @@ public class WorkloadOperations : BaseKubernetesOps
                            return;
                        }
                    }
-                   
+
                    AnsiConsole.WriteLine("Watching pods - kubectl get po --watch");
                    AnsiConsole.Write(new Markup($"[red]{type.ToString()}[/] with pod [green]{item.Metadata.Name}[/]"));
+                   AnsiConsole.WriteLine();
                    AnsiConsole.WriteLine("Waiting for next stats");
                }))
         {
@@ -158,8 +159,11 @@ public class WorkloadOperations : BaseKubernetesOps
             { "apps/v1/Deployment", typeof(V1Deployment) }
         };
 
-        AnsiConsole.WriteLine("Loading data from simple ");
+        AnsiConsole.WriteLine("Loading data from simple yaml file");
         var objects = await KubernetesYaml.LoadAllFromFileAsync(absolutePath, typeMap);
+        
+        if (objects == null) throw new NullReferenceException("Objects in YAML were not recognized.");
+        
         foreach (var obj in objects)
         {
             AnsiConsole.WriteLine(obj.ToString());

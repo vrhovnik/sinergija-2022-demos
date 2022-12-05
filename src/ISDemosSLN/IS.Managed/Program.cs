@@ -15,78 +15,117 @@ AnsiConsole.Write(new TextPath(@"C:\Users\bovrhovn\.kube\config")
 var config = KubernetesClientConfiguration.BuildConfigFromConfigFile();
 IKubernetes client = new Kubernetes(config);
 AnsiConsole.WriteLine($"Listening to API master at {config.Host}");
-
-HorizontalRule("01 - Namespace operations and demos");
+// menu selection
+var menuSelection = AnsiConsole.Prompt(
+    new SelectionPrompt<string>()
+        .Title("Select demo action?")
+        .PageSize(10)
+        .MoreChoicesText("[grey](Move up and down to reveal more menu options)[/]")
+        .AddChoices("01 - Namespace operations and demos",
+            "02 - workloads operations",
+            "03 - use watch option",
+            "04 - load yaml and do modifications",
+            "05 - exec into POD",
+            "06 - do port forwarding to a pod",
+            "07 - get metrics for node and pods"));
 
 var namespaceOps = new NamespaceOperations(client);
-await namespaceOps.ListAllNamespacesAsync();
-
-var nsName = AnsiConsole.Ask<string>("What [green]namespace[/] would you like to create?");
-await namespaceOps.CreateNamespaceAsync(nsName,
-    new Dictionary<string, string> { { "app", "cli" }, { "conf", "sinergija" }, { "type", "ns" } });
-
-await namespaceOps.ListAllNamespacesAsync();
-
-if (AnsiConsole.Confirm($"Delete namespace {nsName}?")) await namespaceOps.DeleteNamespacesAsync(nsName);
-
-HorizontalRule("02 - workloads operations");
-
 var workloadOps = new WorkloadOperations(client);
+switch (menuSelection)
+{
+    case "01 - Namespace operations and demos":
+    {
+        HorizontalRule("01 - Namespace operations and demos");
 
-var namespaceList = await namespaceOps.GetNamespacesAsync();
-var namespaceToCheckPods = AnsiConsole.Prompt(
-    new SelectionPrompt<string>()
-        .Title("Pick [green]namespace[/] to get pods?")
-        .PageSize(10)
-        .MoreChoicesText("[grey](Move up and down to reveal more namespaces)[/]")
-        .AddChoices(namespaceList));
+        await namespaceOps.ListAllNamespacesAsync();
 
-await workloadOps.OutputPodsAsync(namespaceToCheckPods);
+        var nsName = AnsiConsole.Ask<string>("What [green]namespace[/] would you like to create?");
+        await namespaceOps.CreateNamespaceAsync(nsName,
+            new Dictionary<string, string> { { "app", "cli" }, { "conf", "sinergija" }, { "type", "ns" } });
 
-var podImage = AnsiConsole.Ask<string>("What [green]image[/] would you like to use for creating the pod?");
+        await namespaceOps.ListAllNamespacesAsync();
 
-var podName = new Faker().Hacker.Abbreviation().ToLowerInvariant();
+        if (AnsiConsole.Confirm($"Delete namespace {nsName}?")) await namespaceOps.DeleteNamespacesAsync(nsName);
+        break;
+    }
+    case "02 - workloads operations":
+    {
+        HorizontalRule("02 - workloads operations");
 
-await workloadOps.CreatePodAsync(podName, podImage,
-    new Dictionary<string, string> { { "app", "cli" }, { "conf", "sinergija" }, { "type", "pods" } },
-    namespaceToCheckPods);
+        var namespaceList = await namespaceOps.GetNamespacesAsync();
+        var namespaceToCheckPods = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+                .Title("Pick [green]namespace[/] to get pods?")
+                .PageSize(10)
+                .MoreChoicesText("[grey](Move up and down to reveal more namespaces)[/]")
+                .AddChoices(namespaceList));
 
-await workloadOps.OutputPodsAsync(namespaceToCheckPods);
+        await workloadOps.OutputPodsAsync(namespaceToCheckPods);
 
-HorizontalRule("03 - use watch option");
+        var podImage = AnsiConsole.Ask<string>("What [green]image[/] would you like to use for creating the pod?");
 
-await workloadOps.GetPodsWithWatchEnabledAsync(namespaceToCheckPods);
+        var podName = new Faker().Hacker.Abbreviation().ToLowerInvariant();
 
-//open new PWSH terminal and delete the pod kubectl delete pod nameofthepod -n namespacetocheckpods
-//return back here and press CTRL + C to continue
+        await workloadOps.CreatePodAsync(podName, podImage,
+            new Dictionary<string, string> { { "app", "cli" }, { "conf", "sinergija" }, { "type", "pods" } },
+            namespaceToCheckPods);
 
-HorizontalRule("04 - load yaml and do modifications");
-var checkAndRunResources = AnsiConsole.Ask("Read and create [green]resources[/]?", false);
-await workloadOps.LoadYamlOutputDataAsync(checkAndRunResources);
+        await workloadOps.OutputPodsAsync(namespaceToCheckPods);
+        break;
+    }
+    case "03 - use watch option":
+    {
+        HorizontalRule("03 - use watch option");
+        var namespaceList = await namespaceOps.GetNamespacesAsync();
+        var namespaceToCheckPods = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+                .Title("Pick [green]namespace[/] to get pods?")
+                .PageSize(10)
+                .MoreChoicesText("[grey](Move up and down to reveal more namespaces)[/]")
+                .AddChoices(namespaceList));
+        await workloadOps.GetPodsWithWatchEnabledAsync(namespaceToCheckPods);
+        break;
+    }
+    case "04 - load yaml and do modifications":
+    {
+        //open new PWSH terminal and delete the pod kubectl delete pod nameofthepod -n namespacetocheckpods
+        //return back here and press CTRL + C to continue
+        HorizontalRule("04 - load yaml and do modifications");
+        var checkAndRunResources = AnsiConsole.Ask("Read and create [green]resources[/]?", false);
+        await workloadOps.LoadYamlOutputDataAsync(checkAndRunResources);
+        break;
+    }
+    case "05 - exec into POD":
+    {
+        HorizontalRule("05 - exec into POD");
+        var podNameToExecInto = "simple-web-app";
+        await workloadOps.CreatePodAsync(podNameToExecInto, "csacoreimages.azurecr.io/tta/web:1.0",
+            new Dictionary<string, string> { { "app", "cli" }, { "conf", "sinergija" }, { "type", "pods" } });
 
-HorizontalRule("05 - exec into POD");
+        var podToExecInto = await workloadOps.GetV1PodAsync(podNameToExecInto);
+        AnsiConsole.WriteLine($"Read pod {podToExecInto.Metadata.Name}");
 
-var podNameToExecInto = "simple-web-app";
-await workloadOps.CreatePodAsync(podNameToExecInto, "csacoreimages.azurecr.io/tta/web:1.0",
-    new Dictionary<string, string> { { "app", "cli" }, { "conf", "sinergija" }, { "type", "pods" } });
+        await workloadOps.ExecIntoPodAsync(podToExecInto);
+        break;
+    }
+    case "06 - do port forwarding to a pod":
+        HorizontalRule("06 - do port forwarding to a pod");
+        var podNamePortForward = "simple-web-app-for-exec";
+        await workloadOps.CreatePodAsync(podNamePortForward, "csacoreimages.azurecr.io/tta/web:1.0",
+            new Dictionary<string, string> { { "app", "cli" }, { "conf", "sinergija" }, { "type", "pods" } });
 
-var podToExecInto = await workloadOps.GetV1PodAsync(podNameToExecInto);
-AnsiConsole.WriteLine($"Read pod {podToExecInto.Metadata.Name}");
-
-await workloadOps.ExecIntoPodAsync(podToExecInto);
-//
-// AnsiConsole.WriteLine("Port forward to a pod - press key to continue");
-// Console.Read();
-//
-// HorizontalRule("06 - do port forwarding to a pod");
-// await workloadOps.PortforwardToPodAsync(podToExecInto);
-
-AnsiConsole.WriteLine("Get metrics - Press any key to continue");
-
-HorizontalRule("06 - get metrics for node and pods");
-
-await workloadOps.GetNodesMetricsAsync();
-await workloadOps.GetPodsMetricsAsync();
+        var podToForwardTo = await workloadOps.GetV1PodAsync(podNamePortForward);
+        await workloadOps.PortforwardToPodAsync(podToForwardTo);
+        break;
+    case "07 - get metrics for node and pods":
+        HorizontalRule("07 - get metrics for node and pods");
+        await workloadOps.GetNodesMetricsAsync();
+        await workloadOps.GetPodsMetricsAsync();
+        break;
+    default:
+        AnsiConsole.WriteLine("No menu with action selected");
+        break;
+}
 
 void HorizontalRule(string title)
 {
