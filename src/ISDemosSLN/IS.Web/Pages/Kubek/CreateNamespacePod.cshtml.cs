@@ -50,7 +50,8 @@ public class CreateNamespacePodPageModel : PageModel
 
         var form = await Request.ReadFormAsync();
         var imageName = form["image"];
-        logger.LogInformation($"Received {imageName}");
+        
+        logger.LogInformation("Received {ImageName}", imageName);
         if (!string.IsNullOrEmpty(imageName))
         {
             if (string.IsNullOrEmpty(PodName)) PodName = new Faker().Hacker.Abbreviation().ToLowerInvariant();

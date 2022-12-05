@@ -44,6 +44,16 @@
                             Dashboard
                         </a>
                     </li>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li class="nav-item">
+                            <a asp-area=""
+                               asp-page="/Kubek/Store"
+                               class="nav-link text-dark">
+                                Store scenario
+                            </a>
+                        </li>
+                    }
                 </ul>
                 <partial name="_LoginPartial" />
             </div>
